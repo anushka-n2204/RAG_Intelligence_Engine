@@ -64,13 +64,22 @@ st.markdown("""
     </div>
     """, unsafe_allow_html=True)
 
-# 2. Automated Processing Function (No UI changes here)
+# 2. RAG Logic (Updated for validation, UI remains intact)
 def auto_process():
     if st.session_state.uploader:
         with st.status("🧠 Synchronizing Knowledge Modules...", expanded=True) as status:
             all_docs = []
             file_meta = []
+            
+            # Supported formats
+            valid_extensions = (".pdf", ".docx", ".csv")
+            
             for file in st.session_state.uploader:
+                # Validation check
+                if not file.name.lower().endswith(valid_extensions):
+                    st.error(f"⚠️ '{file.name}' is an invalid format. Only PDF, DOCX, and CSV are supported.")
+                    continue  # Skip invalid file
+                
                 temp_path = os.path.join(os.getcwd(), file.name)
                 with open(temp_path, "wb") as f: f.write(file.getbuffer())
                 
@@ -83,18 +92,22 @@ def auto_process():
                 file_meta.append({"name": file.name, "size": len(data)})
                 os.remove(temp_path)
 
-            splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
-            chunks = splitter.split_documents(all_docs)
-            vector_db = Chroma.from_documents(documents=chunks, embedding=OllamaEmbeddings(model="llama3.2:1b"))
-            
-            llm = ChatOllama(model="llama3.2:1b")
-            prompt = ChatPromptTemplate.from_template("Use the following context to answer: {context}\n\nQuestion: {input}")
-            chain = create_stuff_documents_chain(llm, prompt)
-            st.session_state.rag_chain = create_retrieval_chain(vector_db.as_retriever(), chain)
-            
-            status.update(label="🚀 Intelligence Layer Ready!", state="complete")
-            st.session_state.ready = True
-            st.session_state.file_list = file_meta
+            if all_docs:
+                splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+                chunks = splitter.split_documents(all_docs)
+                vector_db = Chroma.from_documents(documents=chunks, embedding=OllamaEmbeddings(model="llama3.2:1b"))
+                
+                llm = ChatOllama(model="llama3.2:1b")
+                prompt = ChatPromptTemplate.from_template("Use the following context to answer: {context}\n\nQuestion: {input}")
+                chain = create_stuff_documents_chain(llm, prompt)
+                st.session_state.rag_chain = create_retrieval_chain(vector_db.as_retriever(), chain)
+                
+                status.update(label="🚀 Intelligence Layer Ready!", state="complete")
+                st.session_state.ready = True
+                st.session_state.file_list = file_meta
+            else:
+                # Feedback if zero valid files were processed
+                status.update(label="❌ No valid modules detected.", state="error")
 
 # 3. UI Content
 st.markdown("<h1 class='main-title'>ORBIT AI</h1>", unsafe_allow_html=True)
