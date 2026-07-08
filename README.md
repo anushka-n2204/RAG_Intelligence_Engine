@@ -1,4 +1,4 @@
-# 🌌 ORBIT AI: Local RAG Intelligence Engine
+# RAG Intelligence Engine
 
 ORBIT AI is a professional-grade, privacy-first Retrieval-Augmented Generation (RAG) platform. It allows users to create a private knowledge base by uploading documents (PDF, DOCX, CSV) and chatting with them using local Large Language Models (LLMs). 
 
@@ -25,7 +25,7 @@ Built specifically for low-latency and high privacy, ORBIT AI runs entirely on l
 | **Frontend** | Streamlit (Custom CSS & Glassmorphism) |
 | **Orchestration** | LangChain & LangChain-Classic |
 | **LLM Engine** | Ollama |
-| **Model** | Llama 3.2 1B (Optimized for i3/Low-Power CPUs) |
+| **Model** | Llama 3.2 1B |
 | **Vector DB** | ChromaDB |
 | **Embeddings** | Ollama Local Embeddings |
 
