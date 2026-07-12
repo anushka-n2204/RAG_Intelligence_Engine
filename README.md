@@ -1,4 +1,4 @@
-# 🛰️ RAG Intelligence Engine
+# RAG Intelligence Engine
 
 This is a professional-grade, **privacy-first Retrieval-Augmented Generation (RAG)** platform. It lets you build a private knowledge base by uploading documents (PDF, DOCX, CSV) and chatting with them using local Large Language Models.
 
